@@ -1,0 +1,8 @@
+node_modules/
+.worktrees/
+
+# Spent session handoffs (see using-continuation-prompts) -- scratch, not history.
+.claude/*-CONTINUATION-*.md
+
+# Keep everything under .superpowers/ tracked, whatever the rules above match.
+!.superpowers/**

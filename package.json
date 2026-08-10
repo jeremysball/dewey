@@ -1,0 +1,41 @@
+{
+  "name": "dewey",
+  "version": "0.1.0",
+  "description": "Catches doc-claim drift mechanically: prescriptive-as-descriptive overstatement and reference rot, checked against real source instead of trusted on read.",
+  "license": "MIT",
+  "author": "Jeremy Ball",
+  "homepage": "https://github.com/jeremysball/dewey#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeremysball/dewey.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jeremysball/dewey/issues"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "dewey": "bin/dewey.js"
+  },
+  "files": [
+    "src",
+    "bin"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:unit",
+    "test:unit": "node --test src/index.test.js",
+    "check": "git ls-files '*.js' | xargs -P4 -I{} node --check {} && npm run lint && npm run typecheck && npm test",
+    "prepare": "git config core.hooksPath .githooks || true"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.19.0",
+    "eslint": "9.19.0",
+    "globals": "15.14.0",
+    "typescript": "5.7.3"
+  }
+}

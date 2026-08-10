@@ -1,0 +1,45 @@
+name: check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # Deliberately one job rather than a [lint, typecheck, unit] matrix.
+    # This account's concurrent-runner cap is shared across repos, and
+    # taskferry already hit it hard enough to leave jobs `queued` for 10-20+
+    # minutes (see its check.yml). Three legs that each finish in seconds
+    # aren't worth three runner slots; the step names still make a failure
+    # attributable in the log.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up mise (reads .mise.toml for the pinned Node version)
+        uses: jdx/mise-action@v2
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Run unit tests
+        run: npm run test:unit
