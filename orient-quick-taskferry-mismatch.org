@@ -53,5 +53,5 @@ The =orient-quick= skill's SKILL.md line 102 should drop the =--all= flag:
 
 * Status
 
-- [ ] orient-quick SKILL.md fixed
+- [X] orient-quick SKILL.md fixed (commit `baf90e7` on `fix/orient-quick-taskferry`)
 - [ ] This finding recorded in dewey's ledger once dewey ships
