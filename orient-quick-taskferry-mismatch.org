@@ -1,0 +1,57 @@
+#+TITLE: orient-quick skill vs. taskferry CLI — a doc-claim drift finding
+#+DATE: 2026-08-12
+
+* Summary
+
+The =orient-quick= skill's workflow template tells the model to run
+
+#+begin_src bash
+taskferry list --directory "$DIR" --all 2>/dev/null
+#+end_src
+
+but the =taskferry list= command rejects that exact invocation:
+
+#+begin_src text
+error: "--all cannot be combined with --directory"
+help: "Valid flags for list: --directory <path>, --all, --limit <number>"
+#+end_src
+
+This is a doc-claim drift: the skill's documentation claims a command
+invocation that the real CLI refuses. It is exactly the kind of thing dewey
+should find and fix.
+
+* Why it is a dewey finding
+
+This is a =rot= finding (a claim that was once true, or that reads as true,
+but no longer holds against the real source). The skill's doc prescribes a
+command shape that the underlying tool rejects. dewey's whole purpose is to
+catch this mechanically — a doc that tells the reader to run something that
+errors out is worse than a doc that says nothing.
+
+* The real contract
+
+=--all= (for =list= and =watch=) drops the directory scope entirely — it
+shows every task/event across all workspaces, regardless of which one
+dispatched it. Combining it with an explicit =--directory= is a
+contradiction the caller almost certainly did not intend, so
+=src/args.js= rejects it rather than silently letting one option win.
+
+The correct per-project invocation is just:
+
+#+begin_src bash
+taskferry list --directory "$DIR" 2>/dev/null
+#+end_src
+
+* Fix
+
+The =orient-quick= skill's SKILL.md line 102 should drop the =--all= flag:
+
+#+begin_src diff
+-   taskferry list --directory "$DIR" --all 2>/dev/null   # if taskferry is set up for this project
++   taskferry list --directory "$DIR" 2>/dev/null   # if taskferry is set up for this project
+#+end_src
+
+* Status
+
+- [X] orient-quick SKILL.md fixed (commit `baf90e7` on `fix/orient-quick-taskferry`)
+- [ ] This finding recorded in dewey's ledger once dewey ships
